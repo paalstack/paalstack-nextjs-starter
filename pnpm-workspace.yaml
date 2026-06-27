@@ -1,0 +1,10 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@paalstack/react-ui@1.2.2'
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver

@@ -1,0 +1,29 @@
+## Commit Messages
+
+Always generate commit messages following Conventional Commits format, enforced by commitlint.
+
+Format: <type>(<scope>): <subject>
+
+[optional body]
+
+Allowed types (only these): feat, fix, docs, style, refactor, perf, test, chore, ci, build, revert
+
+Rules:
+- type: required, lowercase only
+- scope: optional, wrap in parentheses, lowercase or UPPERCASE
+- subject: required, max 72 chars; if the full description exceeds 72 chars, keep subject concise and move extra detail into the body
+- body: add a body whenever the subject alone cannot fully describe the change; blank line before it, wrap lines at 120 chars, use bullet points with "-" for multiple items
+- footer: optional, blank line before it, lines max 100 chars
+
+Examples:
+  feat(auth): add email verification on signup
+  fix(api): handle null session on token refresh
+  chore(deps): update next to v15.3
+
+  refactor: update project structure and improve configurations
+
+  - Updated lint-staged commands to use pnpm
+  - Added VSCode workspace settings
+  - Refactored proxy function to use arrow syntax
+  - Improved error handling in forms
+  - Fixed environment variable handling in Supabase client
