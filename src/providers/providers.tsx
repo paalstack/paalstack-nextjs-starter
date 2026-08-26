@@ -2,6 +2,8 @@
 
 import { type ReactNode } from 'react';
 
+import { PostHogProvider } from '@/libs/analytics/posthog-provider';
+
 import { QueryProvider } from './query-provider';
 import { ThemeProvider } from './theme-provider';
 
@@ -11,8 +13,10 @@ type ProvidersProps = {
 
 export const Providers = ({ children }: ProvidersProps) => {
   return (
-    <ThemeProvider>
-      <QueryProvider>{children}</QueryProvider>
-    </ThemeProvider>
+    <PostHogProvider>
+      <ThemeProvider>
+        <QueryProvider>{children}</QueryProvider>
+      </ThemeProvider>
+    </PostHogProvider>
   );
 };

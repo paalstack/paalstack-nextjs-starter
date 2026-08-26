@@ -44,3 +44,5 @@ pnpm-debug.log*
 graphify-out
 
 supabase/.temp/
+
+.agents

@@ -1,33 +1,33 @@
 'use client';
 
-import { Box, Button, TypographyH2, TypographyMuted, TypographyP } from '@paalstack/react-ui';
+import { ErrorInternalServer } from '@paalstack/react-ui';
+import * as Sentry from '@sentry/nextjs';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-type ErrorProps = {
+import { logger } from '@/libs/logger';
+
+type ErrorPageProps = {
   error: Error & { digest?: string };
   reset: () => void;
 };
 
-const ErrorPage = ({ error, reset }: ErrorProps) => {
+const ErrorPage = ({ error, reset }: ErrorPageProps) => {
+  const router = useRouter();
+
   useEffect(() => {
-    console.error(error);
+    logger.error('Unhandled application error', { message: error.message, digest: error.digest });
+    Sentry.captureException(error);
   }, [error]);
 
   return (
-    <Box className="container flex min-h-[60vh] flex-col items-center justify-center gap-6 py-12">
-      <Box className="flex flex-col items-center gap-2 text-center">
-        <TypographyH2 className="text-foreground text-2xl font-bold">
-          Something went wrong
-        </TypographyH2>
-        <TypographyP className="text-muted-foreground max-w-md text-sm">
-          {error.message}
-        </TypographyP>
-        {error.digest && (
-          <TypographyMuted className="font-mono text-xs">Error ID: {error.digest}</TypographyMuted>
-        )}
-      </Box>
-      <Button onClick={reset}>Try again</Button>
-    </Box>
+    <ErrorInternalServer
+      error={error}
+      statusCode={500}
+      showErrorMessage={process.env.NODE_ENV === 'development'}
+      onRefresh={reset}
+      onGoBack={() => router.push('/')}
+    />
   );
 };
 

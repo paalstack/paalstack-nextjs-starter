@@ -37,37 +37,52 @@ It bundles a battle-tested set of libraries, strict linting, testing infrastruct
 - **Zod v4** + `@t3-oss/env-nextjs` for runtime environment validation
 - **Axios** pre-configured with interceptors, auth token hooks, and typed responses
 - **react-hook-form** + Zod resolver for form handling
-- **Vitest** + React Testing Library for unit and integration tests (80% coverage enforced)
+- **Drizzle ORM** — type-safe PostgreSQL ORM with migration tooling (optional)
+- **Sentry** — error monitoring and performance tracing for browser, server, and edge (optional)
+- **PostHog** — product analytics with ad-blocker-safe reverse proxy (optional)
+- **Resend** — email delivery (optional, dependency pre-installed)
+- **Typed error system** — `AppErrorBase` hierarchy with HTTP status mapping, `withApiErrorHandling` wrapper
+- **Structured logger** — leveled logging with ISO timestamps and JSON context
+- **Rate limiter** — in-memory sliding-window for auth-flow protection
+- **Shared UI components** — `EmptyState`, `LoadingState`, `PageHeader`, `StatCard`, `AppErrorBoundary`, `ConfirmDialog`
+- **Security headers** — X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- **Vitest** + React Testing Library for unit and integration tests
 - **Playwright** for end-to-end browser testing
 - **ESLint v9** flat config with TypeScript strict rules
 - **Prettier** with Tailwind class sorting
 - **Husky** + **lint-staged** + **commitlint** (Conventional Commits)
-- **Supabase** — Auth, PostgreSQL database, and Row Level Security out of the box
+- **Supabase** — Auth, PostgreSQL database, and Row Level Security (optional, disabled by default)
 - **Route protection** via `proxy.ts` — redirect to login / dashboard based on session state
 - **GitHub Actions** CI/CD with type-check, lint, test, and build
+- **Docker** — multi-stage Dockerfile with standalone output, docker-compose for local dev
+- **Vercel** — one-click deploy config with `vercel.json`
 
 ---
 
 ## Tech Stack
 
-| Category        | Library                               |
-| --------------- | ------------------------------------- |
-| Framework       | Next.js 16 (App Router)               |
-| UI              | React 19                              |
-| Language        | TypeScript 5.6                        |
-| Styling         | Tailwind CSS v4 + @paalstack/react-ui |
-| Auth & Database | Supabase (Auth + PostgreSQL + RLS)    |
-| Server State    | TanStack Query v5                     |
-| Client State    | Zustand v5                            |
-| Forms           | react-hook-form + Zod                 |
-| HTTP Client     | Axios                                 |
-| Env Validation  | @t3-oss/env-nextjs + Zod              |
-| Unit Tests      | Vitest + React Testing Library        |
-| E2E Tests       | Playwright                            |
-| Linting         | ESLint v9 (flat config)               |
-| Formatting      | Prettier                              |
-| Git Hooks       | Husky + lint-staged + commitlint      |
-| Package Manager | pnpm                                  |
+| Category         | Library                                     |
+| ---------------- | ------------------------------------------- |
+| Framework        | Next.js 16 (App Router)                     |
+| UI               | React 19                                    |
+| Language         | TypeScript 5.6                              |
+| Styling          | Tailwind CSS v4 + @paalstack/react-ui       |
+| Auth & Database  | Supabase (Auth + PostgreSQL + RLS) optional |
+| ORM              | Drizzle ORM (optional)                      |
+| Server State     | TanStack Query v5                           |
+| Client State     | Zustand v5                                  |
+| Forms            | react-hook-form + Zod                       |
+| HTTP Client      | Axios                                       |
+| Env Validation   | @t3-oss/env-nextjs + Zod                    |
+| Error Monitoring | Sentry (optional)                           |
+| Analytics        | PostHog (optional)                          |
+| Email            | Resend (optional)                           |
+| Unit Tests       | Vitest + React Testing Library              |
+| E2E Tests        | Playwright                                  |
+| Linting          | ESLint v9 (flat config)                     |
+| Formatting       | Prettier                                    |
+| Git Hooks        | Husky + lint-staged + commitlint            |
+| Package Manager  | pnpm                                        |
 
 ---
 
@@ -446,6 +461,270 @@ Resolves the current session and upserts a `profiles` row (required as FK target
 ---
 
 See [`src/features/auth/README.md`](./src/features/auth/README.md) for guides on swapping to an alternative provider (NextAuth.js v5, Clerk, Auth0, AWS Cognito).
+
+---
+
+## Drizzle ORM
+
+Drizzle ORM is included but disabled by default. The schema file is at `src/libs/db/schema/index.ts` and the client at `src/libs/db/index.ts`.
+
+### Enabling Drizzle
+
+1. Uncomment `DATABASE_URL` in `src/libs/env/env.ts` (both `server` and `runtimeEnv` sections)
+2. Add `DATABASE_URL` to `.env.local`
+3. Define your tables in `src/libs/db/schema/index.ts`
+4. Run `pnpm db:generate` to create migrations, then `pnpm db:migrate` to apply them
+
+```bash
+pnpm db:generate    # generate SQL migration from schema changes
+pnpm db:migrate     # apply migrations to the database
+pnpm db:push        # push schema directly (dev only, no migration files)
+pnpm db:studio      # open Drizzle Studio GUI
+```
+
+---
+
+## Sentry
+
+Error monitoring via Sentry is optional and no-ops entirely when `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` are unset.
+
+### Enabling Sentry
+
+1. Set `SENTRY_DSN` and `NEXT_PUBLIC_SENTRY_DSN` in `.env.local`
+2. Optionally set `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` for source map uploads in CI
+
+Sentry is initialized in `src/instrumentation.ts` (server/edge) and `src/instrumentation-client.ts` (browser). Error pages (`error.tsx`, `global-error.tsx`) automatically capture exceptions.
+
+---
+
+## PostHog
+
+Product analytics via PostHog is optional and no-ops when `NEXT_PUBLIC_POSTHOG_KEY` is unset.
+
+### Enabling PostHog
+
+1. Set `POSTHOG_KEY` (server) and `NEXT_PUBLIC_POSTHOG_KEY` (client) in `.env.local`
+2. Optionally set `POSTHOG_HOST` / `NEXT_PUBLIC_POSTHOG_HOST` (defaults to `https://us.i.posthog.com`)
+
+PostHog ingest is reverse-proxied through `/ingest` so ad blockers don't drop analytics requests. Pageviews are captured manually via `PostHogPageView` component.
+
+Use the type-safe analytics client:
+
+```ts
+import { track, identify } from '@/libs/analytics';
+
+track('signup_completed', { userId: '123' });
+identify('123', { email: 'user@example.com' });
+```
+
+Add new events to `src/libs/analytics/events.ts` first — every call site is type-checked against this catalogue.
+
+---
+
+## Error Handling
+
+The starter includes a typed error system in `src/libs/error/error.ts`:
+
+```ts
+import { UnauthorizedError, NotFoundError, ValidationError } from '@/libs/error';
+
+throw new UnauthorizedError();
+throw new NotFoundError('Account');
+throw new ValidationError('Invalid email', { field: 'email' });
+```
+
+Each error maps to an HTTP status code. Use `withApiErrorHandling` to wrap Route Handlers:
+
+```ts
+import { withApiErrorHandling, apiSuccess } from '@/libs/api';
+import { UnauthorizedError } from '@/libs/error';
+
+export const GET = withApiErrorHandling(async (request: NextRequest) => {
+  if (!user) throw new UnauthorizedError();
+  return apiSuccess(await listItems());
+});
+```
+
+---
+
+## Logger
+
+Structured logger in `src/libs/logger/logger.ts`:
+
+```ts
+import { logger } from '@/libs/logger';
+
+logger.debug('Cache miss', { key: 'user-123' });
+logger.info('Server started', { port: 3000 });
+logger.warn('Rate limit approaching', { remaining: 2 });
+logger.error('Database query failed', { table: 'users', error: err.message });
+```
+
+Debug and info logs are suppressed in production. Warn and error always log.
+
+---
+
+## Rate Limiting
+
+In-memory sliding-window rate limiter in `src/libs/rate-limit/rate-limit.ts`:
+
+```ts
+import { checkRateLimit, AUTH_RATE_LIMITS } from '@/libs/rate-limit';
+
+const result = checkRateLimit(
+  `login:${ip}`,
+  AUTH_RATE_LIMITS.login.limit,
+  AUTH_RATE_LIMITS.login.windowMs
+);
+if (!result.allowed) {
+  return new Response('Too many requests', { status: 429 });
+}
+```
+
+For multi-instance production, swap this for Upstash Redis + `@upstash/ratelimit` without changing call sites.
+
+---
+
+## RBAC + ABAC (Role & Attribute-Based Access Control)
+
+The starter includes a complete access control system in `src/libs/rbac/` that combines:
+
+- **RBAC** — role-to-permission mapping with hierarchical roles (admin > manager > member > viewer > guest)
+- **ABAC** — policy engine for context-aware decisions (ownership, time, environment, custom attributes)
+
+### Roles & Permissions
+
+Roles are defined in `src/libs/rbac/permissions.ts`. Each role maps to a set of permissions using the `<resource>:<action>` convention. The `manage` action is a wildcard — `user:manage` grants all actions on the `user` resource.
+
+Add new permissions to the `PERMISSIONS` array, then map them to roles in `ROLE_PERMISSIONS`.
+
+### Server-Side Guards
+
+Use in Server Actions and Route Handlers:
+
+```ts
+import { requireRole, requirePermission, requirePolicy, can } from '@/libs/rbac';
+import { ownerOnlyRule } from '@/libs/rbac';
+
+// Role check — throws UnauthorizedError / ForbiddenError
+requireRole(user, 'admin');
+
+// Permission check
+requirePermission(user, 'billing:manage');
+
+// RBAC + ABAC combined — permission AND policy rules
+requirePolicy(
+  user,
+  'user:update',
+  {
+    resource: { ownerId: post.authorId },
+  },
+  [ownerOnlyRule]
+);
+
+// Non-throwing check
+if (can(user, 'settings:manage')) {
+  // show admin settings
+}
+```
+
+### Client-Side Hooks
+
+```ts
+import { useRole, usePermission, useRoleAtLeast, useCanAccess } from '@/libs/rbac';
+
+const role = useRole(); // 'admin' | 'member' | null
+const canEdit = usePermission('user:update'); // true/false
+const isManager = useRoleAtLeast('manager'); // true/false
+const canAccess = useCanAccess(
+  'user:update',
+  {
+    resource: { ownerId: '123' },
+  },
+  [ownerOnlyRule]
+);
+```
+
+### Client-Side Components (Hide/Show)
+
+```tsx
+import { RoleGate, PermissionGate, Can, AnyPermissionGate, AllPermissionsGate } from '@/libs/rbac';
+import { ownerOnlyRule } from '@/libs/rbac';
+
+// Show only for admins
+<RoleGate role="admin">
+  <AdminPanel />
+</RoleGate>
+
+// Show only if user has permission
+<PermissionGate permission="billing:manage" fallback={<UpgradePrompt />}>
+  <BillingSettings />
+</PermissionGate>
+
+// RBAC + ABAC combined
+<Can
+  permission="user:update"
+  rules={[ownerOnlyRule]}
+  context={{ resource: { ownerId: post.authorId } }}
+>
+  <EditButton />
+</Can>
+
+// Any of multiple permissions
+<AnyPermissionGate permissions={['org:invite', 'org:manage']}>
+  <InviteButton />
+</AnyPermissionGate>
+
+// All of multiple permissions
+<AllPermissionsGate permissions={['billing:view', 'settings:view']}>
+  <ReportsTab />
+</AllPermissionsGate>
+```
+
+### Page-Level Route Protection
+
+Define route guards in `src/proxy.ts` (see the commented example). The `checkRouteAccess` helper redirects unauthenticated users to login and forbidden users to a 403 page:
+
+```ts
+import { checkRouteAccess, type RouteGuard } from '@/libs/rbac';
+
+const ROUTE_GUARDS: RouteGuard[] = [
+  { path: '/dashboard', permission: 'dashboard:view' },
+  { path: '/admin', role: 'admin' },
+  { path: '/settings', role: 'manager' },
+];
+
+// In proxy.ts:
+const accessResponse = checkRouteAccess(request, ROUTE_GUARDS, user);
+if (accessResponse) return accessResponse;
+```
+
+### ABAC Policy Rules
+
+Reusable rules in `src/libs/rbac/abac.ts`:
+
+| Rule                   | Description                                            |
+| ---------------------- | ------------------------------------------------------ |
+| `ownerOnlyRule`        | Allow only if subject.id === resource.ownerId          |
+| `roleRule(role)`       | Allow only if subject has the given role               |
+| `permissionRule(perm)` | Allow only if subject has the permission (RBAC bridge) |
+| `businessHoursRule`    | Allow only during 9-18, Mon-Fri                        |
+
+Write custom rules:
+
+```ts
+import { type PolicyRule } from '@/libs/rbac';
+
+const premiumOnlyRule: PolicyRule = {
+  name: 'premium-only',
+  evaluate: (ctx) => {
+    if (!ctx.environment?.tenantId) return null;
+    return ctx.environment.tenantId === 'premium';
+  },
+};
+```
+
+> **Important**: Client-side gates (RoleGate, PermissionGate, Can) are UI conveniences — they hide actions the user shouldn't see. Always enforce permissions server-side via `requireRole`, `requirePermission`, or `requirePolicy` in Server Actions and Route Handlers.
 
 ---
 
