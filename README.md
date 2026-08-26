@@ -265,7 +265,7 @@ pnpm format:check # Prettier check
 
 ### Bundle analysis
 
-`pnpm analyze` runs `next experimental-analyze` — the built-in Turbopack bundle analyzer. It produces an interactive treemap showing every module and its contribution to the final bundle, broken down by route. Use it to spot unexpectedly large dependencies or code that should be lazy-loaded.
+`pnpm analyze` runs `ANALYZE=true next build` — the bundle analyzer opens an interactive treemap showing every module and its contribution to the final bundle, broken down by route. Use it to spot unexpectedly large dependencies or code that should be lazy-loaded.
 
 ---
 
@@ -281,6 +281,9 @@ pnpm test:ui           # Vitest UI
 ```
 
 Tests live co-located with source files as `*.test.ts(x)`. Setup in `src/test/setup.ts`.
+
+> Playwright E2E specs under `src/test/e2e/` are excluded from the Vitest run
+> (see `vitest.config.ts`) so the unit and E2E suites stay separate.
 
 ### End-to-end tests (Playwright)
 
