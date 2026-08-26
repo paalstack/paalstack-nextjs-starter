@@ -1,113 +1,42 @@
 ---
-description: PaalStack project conventions — @paalstack/react-ui, hooks, icons, providers, component creation pattern
+description: PaalStack Next.js Starter conventions — @paalstack/react-ui consumption, project structure, data layer, forms, errors, styling
 globs: **/*.tsx, **/*.ts
 alwaysApply: false
 ---
 
-# PaalStack Conventions
+# PaalStack Next.js Starter Conventions
 
-Source: https://github.com/paalamugan/paalstack-react-ui
+This is an **application** that **consumes** the `@paalstack/react-ui` design system. You are building app features, not authoring library components. The library already provides Button, Card, Form, Dialog, DataTable, Select, Tabs, Toast, and 70+ more — search it before creating anything.
 
-All UI imports from `@paalstack/react-ui`. Server-safe utilities from `@paalstack/react-ui/lib`.
-
-```tsx
-import { Button, Card, Form, Heading, Text, Badge } from '@paalstack/react-ui';
-import { cn, logger, httpClient, dateIntl } from '@paalstack/react-ui/lib';
-```
+Source of the design system: https://github.com/paalamugan/paalstack-react-ui
 
 ---
 
-## Component Creation — Props API first
-
-**Always use Props API (single component, props only). Use Composition API (`*Root` + sub-components) only when Props API cannot express the required layout.**
+## Imports
 
 ```tsx
-// ✅ Props API — default
-<Card
-  header={{ title: 'Welcome back', description: 'Sign in to continue' }}
-  headerClassName="text-center"
-  titleProps={{ className: 'text-2xl font-bold' }}
-  footer={<><Separator /><Text>Footer content</Text></>}
-  footerClassName="flex-col gap-3"
->
-  {children}
-</Card>
+// UI components — from the umbrella package
+import { Button, Card, Form, Box, HStack, TypographyH1, TypographyMuted, toast } from '@paalstack/react-ui';
 
-// ❌ Composition API — only when Props API is insufficient
-<CardRoot>
-  <CardHeader><CardTitle>Title</CardTitle></CardHeader>
-  <CardContent>{children}</CardContent>
-</CardRoot>
+// Server-safe utilities — from the /lib sub-path
+import { cn, logger } from '@paalstack/react-ui/lib';
+
+// Hooks — client-only, separate package
+import { useDisclosure, useLocalStorage } from '@paalstack/react-hooks';
+
+// Icons — ALWAYS from a family sub-path, never the root barrel
+import { LuSettings, LuMoon, LuSun } from '@paalstack/react-icons/lu';
 ```
 
-**Props API components** (single tag, no sub-components needed):
-`Alert` · `Avatar` · `Badge` · `Button` · `Calendar` · `Card` · `Carousel` · `Checkbox` · `Collapsible` · `Combobox` · `DatePicker` · `DateRangePicker` · `Dialog` · `Drawer` · `DropdownMenu` · `Empty` · `FileUpload` · `HoverCard` · `Input` · `InputGroup` · `InputOTP` · `Loading` · `MultiSelect` · `NavigationMenu` · `NumberInput` · `Pagination` · `Popover` · `Progress` · `RadioGroup` · `Resizable` · `ScrollArea` · `Select` · `Sheet` · `Skeleton` · `Slider` · `Switch` · `Tabs` · `Textarea` · `Toggle` · `ToggleGroup` · `Tooltip`
+### Icons
 
-**Composition-API roots** (use only when slots need custom control):
-`AccordionRoot` · `AlertDialogRoot` · `AlertRoot` · `AvatarRoot` · `ButtonGroupRoot` · `CardRoot` · `CarouselRoot` · `CheckboxRoot` · `CollapsibleRoot` · `ComboboxRoot` · `DialogRoot` · `DrawerRoot` · `DropdownMenuRoot` · `EmptyRoot` · `FileUploadRoot` · `HoverCardRoot` · `InputGroupRoot` · `MenubarRoot` · `NavigationMenuRoot` · `PaginationRoot` · `PopoverRoot` · `ProgressRoot` · `RadioGroupRoot` · `ResizablePanelGroup` · `SelectRoot` · `SheetRoot` · `TabsRoot` · `TooltipRoot`
-
-### Card — Props API reference
-
-| Prop                              | Purpose                                     |
-| --------------------------------- | ------------------------------------------- |
-| `header={{ title, description }}` | Header content                              |
-| `headerClassName`                 | Class on header wrapper                     |
-| `titleProps`                      | Props forwarded to title (e.g. `className`) |
-| `descriptionProps`                | Props forwarded to description              |
-| `contentClassName`                | Class on content wrapper                    |
-| `footer`                          | Footer content (ReactNode)                  |
-| `footerClassName`                 | Class on footer wrapper                     |
-| `action`                          | Top-right action slot in the header         |
-
----
-
-## Layout & Typography
-
-All layout and typography components are Server Components — no `'use client'` needed.
-
-```tsx
-import {
-  Box,
-  Center,
-  Container,
-  Flex,
-  Grid,
-  GridItem,
-  HStack,
-  VStack,
-  Stack,
-  Wrap,
-  WrapItem,
-  Paper,
-  Portal,
-} from '@paalstack/react-ui';
-import { Heading, Text, Separator, Kbd, Label } from '@paalstack/react-ui';
-// Typography — always import individual named exports (Typography.* namespace causes undefined errors in Turbopack)
-import {
-  TypographyH1,
-  TypographyH2,
-  TypographyH3,
-  TypographyH4,
-  TypographyH5,
-  TypographyH6,
-  TypographyP,
-  TypographyStrong,
-  TypographyCode,
-  TypographyUL,
-  TypographyOL,
-  TypographyLI,
-  TypographyBlockQuote,
-  TypographyLead,
-  TypographyMuted,
-  TypographySubtle,
-  TypographySmall,
-  TypographyLarge,
-} from '@paalstack/react-ui';
-```
+- Import from a family sub-path: `/lu` (Lucide, default) · `/hi2` · `/fa6` · `/tb` · `/md` · `/ri` · `/bi` · `/bs` · `/fi` · `/io5` · `/rx` · `/si` · `/pi` · `/vsc` · `/go`.
+- Never `import { LuUser } from '@paalstack/react-icons'` (root barrel).
+- Never install `lucide-react`, `heroicons`, or `react-icons` directly — the sub-path exists.
 
 ### Never use native HTML elements in JSX
 
-Always replace native tags with the appropriate PaalStack component:
+Replace native tags with PaalStack components:
 
 ```tsx
 // ❌ Native HTML — never use these
@@ -115,544 +44,212 @@ Always replace native tags with the appropriate PaalStack component:
 <h1> <h2> <h3> <h4> <h5> <h6> <p> <span> <strong> <ul> <ol> <li> <code> <blockquote> <button>
 
 // ✅ Layout — Box + semantic `as` prop
-<Box />                // generic container (replaces <div>)
-<Box as="header" />    // <header>
-<Box as="main" />      // <main>
-<Box as="section" />   // <section>
-<Box as="nav" />       // <nav>
-<Box as="footer" />    // <footer>
-<Box as="aside" />     // <aside>
-<Box as="article" />   // <article>
+<Box as="header" />   // <header>
+<Box as="main" />     // <main>
+<Box as="section" />  // <section>
+<Box as="nav" />      // <nav>
+<Box as="footer" />   // <footer>
 
-// ✅ Typography — use TypographyXxx named imports (NOT Typography.* namespace — Turbopack resolves it as undefined)
-<TypographyH1 />       // <h1>
-<TypographyH2 />       // <h2>
-<TypographyH3 />       // <h3>
-<TypographyH4 />       // <h4>
-<TypographyH5 />       // <h5>
-<TypographyH6 />       // <h6>
-<TypographyP />        // <p>
-<TypographyStrong />   // <strong>
-<TypographyCode />     // <code>
-<TypographyUL />       // <ul>  (prop: unstyled?)
-<TypographyOL />       // <ol>  (prop: unstyled?)
-<TypographyLI />       // <li>
-<TypographyBlockQuote /> // <blockquote>
-<TypographyLead />     // <p> styled as lead paragraph
-<TypographyMuted />    // <p> styled as muted/secondary text
-<TypographySubtle />   // <p> styled as subtle text
-<TypographySmall />    // <small>
-<TypographyLarge />    // large text block
+// ✅ Typography — named exports (NOT Typography.* namespace — undefined in Turbopack)
+<TypographyH1 /> <TypographyH2 /> <TypographyH3 /> <TypographyH4 />
+<TypographyH5 /> <TypographyH6 /> <TypographyP /> <TypographyStrong />
+<TypographyCode /> <TypographyUL /> <TypographyOL /> <TypographyLI />
+<TypographyBlockQuote /> <TypographyLead /> <TypographyMuted /> <TypographySubtle />
+<TypographySmall /> <TypographyLarge />
 
-// ✅ Heading / Text — use when you need the polymorphic `as` override or inline variants
-<Heading as="h2" />         // when the heading level is dynamic
-<Text as="span" />          // inline text fragment
-<Text as="label" />         // form label (prefer <Label> component instead)
+// ✅ Heading / Text — polymorphic `as` override or inline variants
+<Heading as="h2" />   // dynamic heading level
+<Text as="span" />    // inline text fragment
 
 // ✅ Button — replaces <button>
 <Button />
 ```
 
-### Layout component scenarios
+### Styling
 
-| Component   | Renders                      | Use when                                                   |
-| ----------- | ---------------------------- | ---------------------------------------------------------- |
-| `Box`       | `div` (default, polymorphic) | Generic wrapper; use `as` for semantic HTML                |
-| `VStack`    | `div`                        | Children stacked vertically with consistent gap            |
-| `HStack`    | `div`                        | Children arranged in a horizontal row                      |
-| `Stack`     | `div`                        | Stack with configurable `direction` (`row`\|`column`)      |
-| `Flex`      | `div`                        | Custom flex layouts needing full `flex-*` control          |
-| `Grid`      | `div`                        | CSS grid layouts                                           |
-| `GridItem`  | `div`                        | A single cell inside `Grid`                                |
-| `Wrap`      | `div`                        | Flex container that wraps children to next line            |
-| `WrapItem`  | `div`                        | Item inside `Wrap`                                         |
-| `Center`    | `div`                        | Centers children both horizontally and vertically          |
-| `Container` | `div`                        | Responsive max-width centered page wrapper                 |
-| `Paper`     | `div`                        | Elevated surface (card-like): `shadow`, `withBorder` props |
-| `Portal`    | —                            | Render children outside the DOM hierarchy                  |
-
-```tsx
-// ── Centering ────────────────────────────────────────────────────────────
-<Center className="min-h-screen">
-  <Typography.P>Centered content</Typography.P>
-</Center>
-
-// ── Page shell ───────────────────────────────────────────────────────────
-<Box as="main" className="py-12">
-  <Container>
-    <VStack className="items-start gap-8">
-      <TypographyH1>Page Title</TypographyH1>
-      <TypographyP className="text-muted-foreground">Description</TypographyP>
-    </VStack>
-  </Container>
-</Box>
-
-// ── Horizontal toolbar ───────────────────────────────────────────────────
-<HStack className="justify-between">
-  <TypographyH2>Section</TypographyH2>
-  <Badge variant="outline">Beta</Badge>
-</HStack>
-
-// ── Elevated panel ───────────────────────────────────────────────────────
-<Paper shadow="md" withBorder className="p-6">
-  <VStack className="gap-4">
-    <TypographyH3>Panel title</TypographyH3>
-    <TypographyMuted>Secondary info</TypographyMuted>
-  </VStack>
-</Paper>
-
-// ── Responsive grid ──────────────────────────────────────────────────────
-<Grid className="grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-  {items.map((item) => (
-    <GridItem key={item.id}>
-      <Card>{item.content}</Card>
-    </GridItem>
-  ))}
-</Grid>
-
-// ── Wrapping tag list ────────────────────────────────────────────────────
-<Wrap className="gap-2">
-  {tags.map((tag) => (
-    <WrapItem key={tag}><Badge>{tag}</Badge></WrapItem>
-  ))}
-</Wrap>
-
-// ── Lists ────────────────────────────────────────────────────────────────
-<TypographyUL>
-  <TypographyLI>Item one</TypographyLI>
-  <TypographyLI>Item two</TypographyLI>
-</TypographyUL>
-
-// ── Inline prose ─────────────────────────────────────────────────────────
-<TypographyP>
-  Install with{' '}
-  <TypographyCode>npm install @paalstack/react-ui</TypographyCode>
-  {' '}to get started.
-</TypographyP>
-```
+- Use semantic design tokens: `bg-primary`, `text-muted-foreground`, `border-border`, `bg-accent`, `bg-card`, `bg-background`, `bg-sidebar`.
+- No raw hex colors when a semantic token exists.
+- Extend components with `className`; merge via `cn()` from `@paalstack/react-ui/lib`.
+- Dark mode is handled by `NextThemeProvider` in `src/providers/theme-provider.tsx` — test both themes.
 
 ---
 
-## Styling — Theme Tokens (NEVER hardcode colors)
+## Project structure (follow this pattern)
 
-**Never use hardcoded hex or RGB color values in `className` or inline styles.** Always use Tailwind CSS theme tokens so the UI adapts to light/dark mode automatically.
-
-### ❌ Wrong — hardcoded hex
-
-```tsx
-<Box className="bg-[#0F172A] border-[#1E293B] text-[#F8FAFC]" />
-<Button className="bg-[#22C55E] text-black hover:bg-[#16A34A]" />
+```
+src/
+├── app/                    # Next.js App Router routes
+│   ├── layout.tsx          # Root layout — Providers + SiteHeader
+│   ├── (route)/page.tsx    # Pages
+│   └── api/                # Route Handlers (use withApiErrorHandling)
+├── apis/                   # HTTP layer — one module per endpoint group
+│   └── example/
+│       ├── api.ts          # functions mapping 1:1 to endpoints
+│       ├── type.ts         # request/response types
+│       └── index.ts        # barrel
+├── services/               # Business logic above the API layer
+│   └── api/service.ts      # orchestrates apis, transforms, domain errors
+├── hooks/
+│   ├── queries/            # TanStack Query hooks (useXQuery)
+│   │   └── useExampleQuery/{hook.ts,index.ts}
+│   ├── mutations/          # TanStack Query mutations (useXMutation)
+│   │   └── useExampleMutation/{hook.ts,index.ts}
+│   └── useAppStore/        # Zustand store access
+├── schemas/                # Zod schemas (react-hook-form + zodResolver)
+│   └── example/{schema.ts,index.ts}
+├── features/               # Feature-scoped modules (auth, billing, ...)
+│   └── auth/{hooks,types,index.ts}
+├── components/
+│   ├── ui/                 # App-specific UI wrappers (EmptyState, StatCard, ...)
+│   ├── shared/             # Cross-feature components (ConfirmDialog, AppErrorBoundary)
+│   └── SiteHeader/         # Feature components
+├── constants/              # ROUTES, app config
+├── enums/                  # Status enums
+├── libs/                   # Infrastructure (env, axios, query-client, logger, error, db, supabase, rbac, rate-limit)
+├── providers/              # Providers composition
+├── stores/                 # Zustand stores
+├── types/                  # Shared types
+└── utils/                  # Pure helpers
 ```
 
-### ✅ Correct — theme tokens
-
-```tsx
-<Box className="bg-card border-border text-foreground" />
-<Button className="bg-primary text-primary-foreground hover:bg-primary/90" />
-```
-
-### Full token reference
-
-All tokens below map to CSS custom properties via `@theme` in `globals.css`. Every token supports Tailwind's opacity modifier (e.g. `bg-primary/50`).
-
-**Surfaces & layout**
-
-| Token                               | CSS variable           | Use for                          |
-| ----------------------------------- | ---------------------- | -------------------------------- |
-| `bg-background` / `text-background` | `--background`         | Page / root background           |
-| `bg-foreground` / `text-foreground` | `--foreground`         | Primary body text                |
-| `bg-card` / `text-card`             | `--card`               | Card, panel, sheet surfaces      |
-| `text-card-foreground`              | `--card-foreground`    | Text inside cards                |
-| `bg-popover` / `text-popover`       | `--popover`            | Dropdown, tooltip surfaces       |
-| `text-popover-foreground`           | `--popover-foreground` | Text inside popovers             |
-| `bg-muted` / `text-muted`           | `--muted`              | Subtle fills, skeleton, hover bg |
-| `text-muted-foreground`             | `--muted-foreground`   | Helper / secondary text          |
-| `border-border`                     | `--border`             | All borders and dividers         |
-| `border-input`                      | `--input`              | Form input borders               |
-| `ring-ring`                         | `--ring`               | Focus rings                      |
-
-**Brand colors**
-
-| Token                             | CSS variable             | Use for                           |
-| --------------------------------- | ------------------------ | --------------------------------- |
-| `bg-primary` / `text-primary`     | `--primary`              | Primary action, brand accent      |
-| `text-primary-foreground`         | `--primary-foreground`   | Text/icons on primary bg          |
-| `bg-primary-soft`                 | `--primary-soft`         | Soft primary tint (badge bg etc.) |
-| `bg-secondary` / `text-secondary` | `--secondary`            | Secondary action                  |
-| `text-secondary-foreground`       | `--secondary-foreground` | Text on secondary bg              |
-| `bg-secondary-soft`               | `--secondary-soft`       | Soft secondary tint               |
-| `bg-tertiary` / `text-tertiary`   | `--tertiary`             | Tertiary accent                   |
-| `text-tertiary-foreground`        | `--tertiary-foreground`  | Text on tertiary bg               |
-| `bg-tertiary-soft`                | `--tertiary-soft`        | Soft tertiary tint                |
-| `bg-accent` / `text-accent`       | `--accent`               | Hover fills, subtle highlights    |
-| `text-accent-foreground`          | `--accent-foreground`    | Text on accent bg                 |
-| `bg-accent-soft`                  | `--accent-soft`          | Soft accent tint                  |
-
-**Semantic status colors**
-
-| Token                                 | CSS variable               | Use for                 |
-| ------------------------------------- | -------------------------- | ----------------------- |
-| `bg-destructive` / `text-destructive` | `--destructive`            | Delete / error actions  |
-| `text-destructive-foreground`         | `--destructive-foreground` | Text on destructive bg  |
-| `bg-destructive-soft`                 | `--destructive-soft`       | Error background tint   |
-| `bg-danger` / `text-danger`           | `--danger`                 | Danger alerts           |
-| `text-danger-foreground`              | `--danger-foreground`      | Text on danger bg       |
-| `bg-danger-soft`                      | `--danger-soft`            | Danger background tint  |
-| `bg-warning` / `text-warning`         | `--warning`                | Warning states          |
-| `text-warning-foreground`             | `--warning-foreground`     | Text on warning bg      |
-| `bg-warning-soft`                     | `--warning-soft`           | Warning background tint |
-| `bg-success` / `text-success`         | `--success`                | Success states          |
-| `text-success-foreground`             | `--success-foreground`     | Text on success bg      |
-| `bg-success-soft`                     | `--success-soft`           | Success background tint |
-| `bg-info` / `text-info`               | `--info`                   | Informational states    |
-| `text-info-foreground`                | `--info-foreground`        | Text on info bg         |
-| `bg-info-soft`                        | `--info-soft`              | Info background tint    |
-
-**Sidebar**
-
-| Token                                                    | CSS variable                                         |
-| -------------------------------------------------------- | ---------------------------------------------------- |
-| `bg-sidebar` / `text-sidebar-foreground`                 | `--sidebar` / `--sidebar-foreground`                 |
-| `bg-sidebar-primary` / `text-sidebar-primary-foreground` | `--sidebar-primary` / `--sidebar-primary-foreground` |
-| `bg-sidebar-accent` / `text-sidebar-accent-foreground`   | `--sidebar-accent` / `--sidebar-accent-foreground`   |
-| `border-sidebar-border` / `ring-sidebar-ring`            | `--sidebar-border` / `--sidebar-ring`                |
-
-**Chart palette** (use for data-series colors in charts)
-
-```tsx
-// ✅ Prefer chart tokens over hardcoded hex for chart series
-className = 'fill-chart-1'; // --chart-1
-className = 'fill-chart-2'; // --chart-2
-className = 'stroke-chart-3'; // --chart-3
-// chart-4, chart-5 also available
-```
-
-### Common patterns
-
-```tsx
-// Page shell
-<Flex className="min-h-screen bg-background">
-
-// Card surface
-<Card className="border-border bg-card" />
-
-// Muted hover row
-<Box className="border-b border-border hover:bg-muted/40" />
-
-// Primary button (manual)
-<button className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50" />
-
-// Soft status badge
-<Badge className="bg-success-soft text-success-foreground" />
-
-// Destructive action
-<Button className="text-destructive hover:text-destructive/80" />
-
-// Error state container
-<Box className="border border-destructive/50 bg-destructive-soft" />
-```
-
-### Non-Tailwind contexts (e.g. Recharts inline styles)
-
-When a prop only accepts a CSS string (not a Tailwind class), use `var(--token)` directly — **no** `hsl()` wrapper needed since the CSS variables are already complete color values:
-
-```tsx
-<Tooltip contentStyle={{
-  backgroundColor: 'var(--card)',
-  border: '1px solid var(--border)',
-  color: 'var(--foreground)',
-}} />
-<XAxis tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }} axisLine={{ stroke: 'var(--border)' }} />
-<CartesianGrid stroke="var(--border)" />
-<Area stroke="var(--primary)" fill="url(#gradient)" />
-<linearGradient>
-  <stop stopColor="var(--primary)" stopOpacity={0.3} />
-</linearGradient>
-```
-
-### Data-series colors (charts) — hex exempt
-
-Semantic colors for chart data series (statuses, categories) are **exempt** from the no-hex rule — they are intentional fixed data colors, not UI chrome. Prefer `chart-1…5` tokens when possible; fall back to hex only for specific named states.
-
-```tsx
-// ✅ OK — named data series, not UI chrome
-const STATUS_COLORS = { won: '#22C55E', lost: '#EF4444', contacted: '#3B82F6' };
-
-// ✅ Better — use chart tokens where order doesn't matter
-className = 'fill-chart-1 stroke-chart-1';
-```
+**Module pattern:** each module is a folder with an implementation file (`component.tsx`, `hook.ts`, `schema.ts`, `api.ts`, `store.ts`) plus an `index.ts` barrel that re-exports. Import via the barrel (`@/components/ExampleCard`, `@/hooks/queries/useExampleQuery`).
 
 ---
 
-## Server vs Client Components
+## Data layer
 
+### Server state → TanStack Query v5
+
+```tsx
+// src/hooks/queries/useExampleQuery/hook.ts
+import { useQuery } from '@tanstack/react-query';
+import { getExampleItems } from '@/apis/example';
+
+export const EXAMPLE_QUERY_KEY = ['example', 'items'] as const;
+
+export const useExampleQuery = (page = 1, pageSize = 10) =>
+  useQuery({
+    queryKey: [...EXAMPLE_QUERY_KEY, { page, pageSize }],
+    queryFn: () => getExampleItems(page, pageSize),
+  });
 ```
-Server (no directive)  →  Box · VStack · HStack · Heading · Text · Card · Badge · Separator
-Client ('use client')  →  Button (onClick) · Dialog · Drawer · Form · tabs with state · all hooks
+
+- Define a `const QUERY_KEY` per query and reuse it for invalidation.
+- Mutations invalidate the related query key in `onSuccess`.
+
+```tsx
+// src/hooks/mutations/useExampleMutation/hook.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createExampleItem } from '@/apis/example';
+import { EXAMPLE_QUERY_KEY } from '@/hooks/queries/useExampleQuery';
+
+export const useCreateExampleMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createExampleItem,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: EXAMPLE_QUERY_KEY });
+    },
+  });
+};
 ```
+
+### Client state → Zustand v5
+
+Use Zustand (with `devtools` + `persist` middleware) for global UI state — loading, notifications, theme, sidebar, preferences. Access via a hook in `src/hooks/useAppStore/`. Do not use Zustand for server data.
+
+### HTTP → Axios (`src/libs/axios/client.ts`)
+
+- Use the pre-configured `apiClient` (base URL from env, JSON headers, 30s timeout, auth/error interceptors).
+- Each `src/apis/*/api.ts` function maps to one endpoint and returns `response.data`.
+
+### Env → `@t3-oss/env-nextjs` (`src/libs/env/env.ts`)
+
+- Never read `process.env` directly. Add new vars to `src/libs/env/env.ts` with a Zod schema, then import `env` from `@/libs/env`.
+- Server-only vars go in `server`, client vars (prefixed `NEXT_PUBLIC_`) in `client`.
 
 ---
 
 ## Forms
 
-Always start with Pattern 1. Move down only when you need more control.
+Use `Form` + `react-hook-form` + `zod` + `@hookform/resolvers/zod`.
 
 ```tsx
 'use client';
-import { Form, FormFieldItem, FormFieldItems, FormRoot } from '@paalstack/react-ui';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-```
+import { useForm } from 'react-hook-form';
+import { Form, Button, Box, HStack } from '@paalstack/react-ui';
+import { loginSchema, type LoginFormValues } from '@/schemas/auth';
 
-### Field types
+const form = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema), defaultValues: { email: '', password: '' } });
 
-| `type`                | Renders                                                                     |
-| --------------------- | --------------------------------------------------------------------------- |
-| `'input'`             | `<Input>` — use `inputType` for `'email'`, `'password'`, `'tel'`            |
-| `'textarea'`          | `<Textarea>`                                                                |
-| `'number'`            | `<NumberInput>` — via `numberInputProps`                                    |
-| `'select'`            | `<Select>` — pass `options: { label, value }[]` or `string[]`               |
-| `'combobox'`          | Searchable `<Combobox>` — pass `options`                                    |
-| `'multi-select'`      | `<MultiSelect>` — pass `options`                                            |
-| `'checkbox'`          | Single `<Checkbox>`                                                         |
-| `'checkbox-group'`    | Group — pass `options: string[]`                                            |
-| `'radio-group'`       | `<RadioGroup>` — pass `options: string[]`                                   |
-| `'date-picker'`       | `<DatePicker>`                                                              |
-| `'date-range-picker'` | `<DateRangePicker>`                                                         |
-| `'input-group'`       | `<InputGroup>` with `addonStart` / `addonEnd`                               |
-| `'field'`             | Custom in label+error shell — `render: ({ field }) => <Input {...field} />` |
-| `'custom'`            | Raw render — `render: ({ field }) => <YourComponent {...field} />`          |
-
-### Pattern 1 — `fields` prop (default)
-
-```tsx
 <Form
   form={form}
   onSubmit={handleSubmit}
   fields={[
-    { type: 'input', name: 'email', label: 'Email', inputType: 'email', required: true },
+    { type: 'input', name: 'email', label: 'Email', inputType: 'email', placeholder: 'you@example.com', required: true },
     { type: 'input', name: 'password', label: 'Password', inputType: 'password', required: true },
-    { type: 'checkbox', name: 'terms', label: 'I agree to the terms', required: true },
   ]}
   hideResetButton
-/>
-```
-
-### Pattern 2 — mixed `fields` + `FormFieldItem` children
-
-```tsx
-<Form
-  form={form}
-  onSubmit={handleSubmit}
-  fields={
-    [
-      /* main fields */
-    ]
-  }
-  hideResetButton
->
-  <FormFieldItem
-    control={form.control}
-    field={{ type: 'checkbox', name: 'terms', label: 'Agree', required: true }}
-  />
-</Form>
-```
-
-### Pattern 3 — `fields={[]}` + grouped children
-
-```tsx
-<Form form={form} onSubmit={handleSubmit} fields={[]} submitText="Register">
-  <Text className="text-sm font-semibold">Personal Info</Text>
-  <Box className="grid grid-cols-2 gap-4">
-    <FormFieldItems fields={personalFields} control={form.control} />
-  </Box>
-  <FormFieldItem
-    control={form.control}
-    field={{ type: 'checkbox', name: 'terms', label: 'Agree', required: true }}
-  />
-</Form>
-```
-
-### Pattern 4 — `FormRoot` (full custom escape hatch)
-
-```tsx
-<FormRoot {...form}>
-  <Box as="form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-    <FormFieldItem
-      control={form.control}
-      field={{ type: 'input', name: 'username', label: 'Username', required: true }}
-    />
-    <Button type="submit">Submit</Button>
-  </Box>
-</FormRoot>
-```
-
-### Button customisation
-
-```tsx
-// Custom submit via render prop
-<Form form={form} onSubmit={handleSubmit} fields={fields}
   SubmitButton={({ isSubmitting, onFormSubmit }) => (
     <Button type="submit" onClick={onFormSubmit} isLoading={isSubmitting} className="w-full">
-      {isSubmitting ? 'Saving...' : 'Save'}
+      {isSubmitting ? 'Signing in...' : 'Sign in'}
     </Button>
   )}
 />
-
-// Custom children buttons
-<Form form={form} onSubmit={handleSubmit} fields={fields} hideSubmitButton hideResetButton>
-  <Box className="flex gap-2 justify-end">
-    <Button variant="outline" onClick={() => form.reset()}>Cancel</Button>
-    <Button type="submit">Save</Button>
-  </Box>
-</Form>
 ```
+
+- Schemas live in `src/schemas/<feature>/schema.ts`; export the inferred type (`z.infer<typeof schema>`).
+- Use `Field` + `Label` for labels/errors, or the `fields` array on `Form`.
+- For custom submit buttons use the `SubmitButton` render prop, or `hideSubmitButton hideResetButton` with your own children.
+
+---
+
+## Errors
+
+Use the typed error system in `src/libs/error/error.ts`:
+
+- `AppErrorBase` hierarchy: `ValidationError`, `UnauthorizedError`, `ForbiddenError`, `NotFoundError`, `ConflictError`, `DatabaseError`, `ExternalServiceError`, `RateLimitedError`.
+- Each maps to an HTTP status via `ERROR_STATUS_MAP`.
+- In Route Handlers, wrap with `withApiErrorHandling` and return `apiSuccess` / `apiError`:
+
+```tsx
+import { withApiErrorHandling, apiSuccess } from '@/libs/api';
+import { UnauthorizedError } from '@/libs/error';
+
+export const GET = withApiErrorHandling(async (request: NextRequest) => {
+  const { user, error } = await requireAuth();
+  if (error) throw new UnauthorizedError();
+  return apiSuccess(await listItems(user.id));
+});
+```
+
+- Throw the typed errors; never return raw 500 HTML.
 
 ---
 
 ## Providers
 
-All providers from `@paalstack/react-ui`. Do **not** import from `@paalstack/react-providers` directly.
-
-### NextThemeProvider — Next.js only (includes ToastProvider — no separate `<Toaster>` needed)
-
-```tsx
-// src/app/layout.tsx — Server Component, no 'use client'
-import { NextThemeProvider, FormatIntlProvider } from '@paalstack/react-ui';
-import { QueryProvider } from '@/providers/query-provider';
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <NextThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <FormatIntlProvider countryBasedFormatKey="US">
-            <QueryProvider>{children}</QueryProvider>
-          </FormatIntlProvider>
-        </NextThemeProvider>
-      </body>
-    </html>
-  );
-}
-```
-
-### useNextTheme — Client Component
-
-```tsx
-'use client';
-import { useNextTheme } from '@paalstack/react-ui';
-
-const { isDark, resolvedTheme, setTheme } = useNextTheme();
-setTheme(isDark ? 'light' : 'dark');
-```
-
-### FormatIntlProvider / useFormatIntl
-
-```tsx
-'use client';
-import { useFormatIntl } from '@paalstack/react-ui';
-
-const { dateIntl, currencyIntl, numberIntl, t } = useFormatIntl();
-dateIntl.format(new Date()); // '06/23/2026'
-currencyIntl.format(1234.56); // '$1,234.56'
-numberIntl.format(0.45, { style: 'percent' }); // '45%'
-```
-
-### Toast
-
-```tsx
-'use client';
-import { toast } from '@paalstack/react-ui';
-
-toast.success('Saved!');
-toast.error('Something went wrong.');
-toast.info('3 items updated.');
-toast.promise(saveData(), { loading: 'Saving...', success: 'Saved!', error: 'Error.' });
-```
+- `src/providers/providers.tsx` composes `PostHogProvider` → `ThemeProvider` → `QueryProvider`.
+- `ThemeProvider` wraps `NextThemeProvider` from `@paalstack/react-ui` (includes ToastProvider — no separate `<Toaster>`).
+- Add new providers to `src/providers/providers.tsx`, not the root layout.
 
 ---
 
-## @paalstack/react-hooks — client-only
+## Do Not
 
-All hooks require `'use client'`.
-
-```tsx
-'use client';
-import { useToggle, useCounter, useDisclosure, useLocalStorage } from '@paalstack/react-hooks';
-
-const [isOpen, { open, close, toggle }] = useToggle(false);
-const [count, { increment, decrement, reset }] = useCounter(0);
-const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
-const [theme, setTheme] = useLocalStorage('theme', 'light');
-
-// Also available:
-// useDebouncedValue · useDebouncedState · useSessionStorage · useClickOutside
-// useClipboard · useIntersection · useMediaQuery · useWindowScroll · useElementSize
-// usePrevious · useHotkeys · usePagination · useFocusTrap · useIdle · useHash
-// useDocumentTitle · useInterval · useTimeout · useOs · useReducedMotion
-// useQueue · useListState
-```
+- Duplicate Button, Input, Dialog, Table, Form, Select, Checkbox, or common hooks the library provides.
+- Write new `useMediaQuery`, `useLocalStorage`, `useDisclosure` — `@paalstack/react-hooks` covers them.
+- Import the `@paalstack/react-icons` root barrel or install icon packages directly.
+- Use raw hex colors when semantic tokens exist.
+- Use native HTML elements in JSX.
+- Read `process.env` directly — use `env` from `@/libs/env`.
+- Mix Zustand and TanStack Query for the same data.
+- Author library components here — this is a consumer app.
 
 ---
 
-## @paalstack/react-icons
+## Docs
 
-Always import from the specific family sub-path. Never from root.
-
-```tsx
-// ✅ Correct — import from sub-path
-import { LuSettings, LuUser, LuSearch, LuMoon, LuSun } from '@paalstack/react-icons/lu'; // Lucide (preferred)
-import { HiMoon } from '@paalstack/react-icons/hi2';
-import { FaGithub } from '@paalstack/react-icons/fa6';
-
-// ❌ Wrong
-import { LuUser } from '@paalstack/react-icons';
-
-// Usage
-<LuSettings className="size-5 text-muted-foreground" />
-<Button variant="outline" size="sm"><LuMoon className="mr-2 size-4" />Dark mode</Button>
-import { IconButton } from '@paalstack/react-ui';
-<IconButton aria-label="Settings" icon={<LuSettings className="size-5" />} />
-```
-
-Available families: `/lu` (Lucide — default) · `/hi2` · `/fa6` · `/tb` · `/md` · `/ri` · `/bi` · `/bs` · `/fi` · `/io5` · `/rx` · `/si` · `/pi` · `/vsc` · `/go`
-
----
-
-## @paalstack/react-ui/lib — server-safe utilities
-
-```tsx
-import {
-  cn,
-  logger,
-  httpClient,
-  dateIntl,
-  currencyIntl,
-  numberIntl,
-} from '@paalstack/react-ui/lib';
-
-// cn — class merging (clsx + tailwind-merge)
-cn('px-4 py-2', isActive && 'bg-primary', 'px-6'); // → 'py-2 bg-primary px-6'
-
-// logger
-logger.info('User signed in', { userId });
-logger.error('API failed', error);
-
-// httpClient (Axios-based)
-const data = await httpClient.get<User>('/api/users/1');
-await httpClient.post<User>('/api/users', { name: 'Alice' });
-
-// Formatters (standalone, no provider needed)
-dateIntl.format(new Date()); // '06/23/2026'
-currencyIntl.format(1234.56); // '$1,234.56'
-numberIntl.format(1234567.89); // '1,234,567.89'
-
-// Error classes
-import { InternalServerException, ResourceNotFoundException } from '@paalstack/react-ui/lib';
-throw new InternalServerException({ message: 'Something went wrong' });
-```
+The design system's full catalogs live in the react-ui monorepo `docs/`:
+COMPONENT_CATALOG.md, HOOKS_CATALOG.md, ICONS_CATALOG.md, UTILITIES_CATALOG.md, TYPES_CATALOG.md, DESIGN_SYSTEM.md, APPLICATION_GUIDE.md.
