@@ -42,3 +42,5 @@ pnpm-debug.log*
 .next/
 
 graphify-out
+
+supabase/.temp/
