@@ -35,6 +35,11 @@ jobs:
     permissions:
       pull-requests: write # needed to post preview URL comment on PRs
 
+    # Skip deploy on dependabot PRs — dependabot-triggered runs don't inherit
+    # the VERCEL_TOKEN repository secret, so `vercel pull` would fail with
+    # "You defined --token, but it's missing a value".
+    if: ${{ secrets.VERCEL_TOKEN != '' }}
+
     steps:
       - uses: actions/checkout@v7
 
