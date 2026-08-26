@@ -33,6 +33,7 @@ jobs:
     name: ${{ github.ref == 'refs/heads/main' && 'Production Deploy' || 'Preview Deploy' }}
     runs-on: ubuntu-latest
     permissions:
+      contents: read # needed for actions/checkout on a private repo
       pull-requests: write # needed to post preview URL comment on PRs
 
     steps:
@@ -42,7 +43,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: '22.23.1'
+          node-version: '24.16.0'
           cache: 'pnpm'
 
       - name: Install dependencies
