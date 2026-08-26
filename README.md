@@ -2,7 +2,7 @@
 
 > The official production-ready Next.js starter template for all PaalStack applications.
 
-[![CI](https://github.com/paalamugan/paalstack-nextjs-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/paalamugan/paalstack-nextjs-starter/actions/workflows/ci.yml)
+[![CI](https://github.com/paalstack/paalstack-nextjs-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/paalamugan/paalstack-nextjs-starter/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Auth%20%2B%20DB-3ECF8E)](https://supabase.com/)
