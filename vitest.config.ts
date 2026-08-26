@@ -11,6 +11,10 @@ export default defineConfig({
     // yet — coverage is opt-in per module, not enforced repo-wide.
     passWithNoTests: true,
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    // Playwright specs live under src/test/e2e and must not be picked up by
+    // Vitest — they import `@playwright/test`'s `test.describe`, which Vitest
+    // can't run and throws "did not expect test.describe() to be called here".
+    exclude: ['node_modules', 'dist', '.next', '.idea', '.git', '.cache', 'src/test/e2e'],
     setupFiles: ['./src/test/setup.ts'],
     coverage: {
       provider: 'v8',
