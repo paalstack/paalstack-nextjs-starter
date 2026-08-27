@@ -97,7 +97,7 @@ It bundles a battle-tested set of libraries, strict linting, testing infrastruct
 
 ```bash
 # Clone the repository
-git clone https://github.com/paalamugan/paalstack-nextjs-starter.git my-app
+git clone https://github.com/paalstack/paalstack-nextjs-starter.git my-app
 cd my-app
 
 # Install dependencies
