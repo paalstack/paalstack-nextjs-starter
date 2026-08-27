@@ -1,5 +1,12 @@
 # PaalStack React UI - Documentation Index
 
+> **Note to readers of this starter:** This `docs/` directory is copied verbatim from the
+> `@paalstack/react-ui` design-system monorepo (`paalamugan/paalstack-react-ui`). It documents the
+> library's full API (components, hooks, icons, utilities, types, design tokens) so you can look up
+> the design system without leaving this repo. It is **not** this starter's own documentation — for
+> the starter's overview, setup, and env-variable guides see the top-level `README.md`, and for the
+> authoritative coding conventions see `.cursor/rules/paalstack.mdc`.
+
 ## 📚 Complete AI Knowledge Base
 
 This directory contains comprehensive documentation for AI coding agents (Cursor, Claude Code, GitHub Copilot, Gemini CLI, OpenAI Codex, etc.) to understand and effectively use the PaalStack React UI library.
