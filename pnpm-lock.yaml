@@ -18,8 +18,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@paalstack/react-ui':
-        specifier: ^1.2.2
-        version: 1.2.2(@date-fns/tz@1.5.0)(@standard-schema/spec@1.1.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(debug@4.4.3(supports-color@8.1.1))(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(redux@5.0.1)(supports-color@8.1.1)(tailwindcss@4.3.3)
+        specifier: ^1.3.0
+        version: 1.3.0(@date-fns/tz@1.5.0)(@standard-schema/spec@1.1.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(debug@4.4.3(supports-color@8.1.1))(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(redux@5.0.1)(supports-color@8.1.1)(tailwindcss@4.3.3)
       '@sentry/nextjs':
         specifier: ^10.64.0
         version: 10.71.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.10.0(@opentelemetry/api@1.9.1))(next@16.3.3(@babel/core@7.29.7(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)(webpack@5.109.2(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.26))
@@ -224,7 +224,7 @@ importers:
         version: 6.1.1(supports-color@8.1.1)(typescript@5.9.3)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
       vitest:
         specifier: ^4.1.11
-        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@7.3.5(@types/node@26.3.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
 
 packages:
 
@@ -1506,9 +1506,10 @@ packages:
       react: '>=18'
       react-dom: '>=18'
 
-  '@paalstack/react-ui@1.2.2':
-    resolution: {integrity: sha512-hhK1LP1PGxy18BzhAmsh2FXI2GG/KPL8fvuQIGFJ0T+dE+qFw2NbumF6cenmwru0wo/VTUW3BKCCObi6pLw1nw==}
+  '@paalstack/react-ui@1.3.0':
+    resolution: {integrity: sha512-vMk4MZSQSsor+z+u/Sr2ODHenY/KhKhM5t0aIPd4JVVIH0N2j7OJDXeGv2FlQQIUpMC0XpEKdlpNdoVCp/37/w==}
     engines: {node: '>=22'}
+    hasBin: true
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
@@ -2142,6 +2143,17 @@ packages:
     engines: {node: '>= 18'}
     peerDependencies:
       webpack: '>=5.0.0'
+
+  '@shadcn/react@0.3.0':
+    resolution: {integrity: sha512-iKN0NuYe850VDHlxEfvppFrpa7CMV3zArTHusXlaSmeFeQhohGbIqclv6WwPTs/44I8EkXQpcuRt6sXEVKkWqQ==}
+    peerDependencies:
+      '@types/react': '>=19'
+      react: '>=19'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
 
   '@simple-libs/child-process-utils@2.0.0':
     resolution: {integrity: sha512-dvNoRKLijXnD0XoJAz94pbNuB5GQgDr55UhpSPhffDkTT0Cmcqh9jSCOtwfT2d4H6MI9E7c4SgtMuJXZ6F3c6A==}
@@ -5930,10 +5942,6 @@ packages:
     resolution: {integrity: sha512-HvltHd7avK13QIw/oLe4qoOLyoVSoafqJ2jYOrtMRBkbYT31eiBQ8O0ehRKZiEZCMEyLFQNIADpgCWC5fALvYQ==}
     engines: {node: '>=22.19.0'}
 
-  unicorn-magic@0.1.0:
-    resolution: {integrity: sha512-lRfVq8fE8gz6QMBuDM6a+LO3IAzTi05H6gCVaUpir2E1Rwpo4ZUog45KpNXKC/Mn3Yb9UDuHumeFTo9iV/D9FQ==}
-    engines: {node: '>=18'}
-
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
@@ -7341,10 +7349,11 @@ snapshots:
       react-dom: 19.2.8(react@19.2.8)
       react-icons: 5.6.0(react@19.2.8)
 
-  '@paalstack/react-ui@1.2.2(@date-fns/tz@1.5.0)(@standard-schema/spec@1.1.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(debug@4.4.3(supports-color@8.1.1))(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(redux@5.0.1)(supports-color@8.1.1)(tailwindcss@4.3.3)':
+  '@paalstack/react-ui@1.3.0(@date-fns/tz@1.5.0)(@standard-schema/spec@1.1.0)(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(debug@4.4.3(supports-color@8.1.1))(react-dom@19.2.8(react@19.2.8))(react-is@19.2.8)(react@19.2.8)(redux@5.0.1)(supports-color@8.1.1)(tailwindcss@4.3.3)':
     dependencies:
       '@base-ui/react': 1.6.0(@date-fns/tz@1.5.0)(@types/react@19.2.18)(date-fns@4.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@hookform/resolvers': 5.9.1(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(react-hook-form@7.86.0(react@19.2.8))(zod@3.25.76)
+      '@shadcn/react': 0.3.0(@types/react@19.2.18)(react@19.2.8)
       '@tanstack/react-table': 8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       cheerio: 1.2.0
@@ -7580,7 +7589,7 @@ snapshots:
       immer: 11.1.8
       redux: 5.0.1
       redux-thunk: 3.1.0(redux@5.0.1)
-      reselect: 5.1.1
+      reselect: 5.2.0
     optionalDependencies:
       react: 19.2.8
       react-redux: 9.3.0(@types/react@19.2.18)(react@19.2.8)(redux@5.0.1)
@@ -7930,6 +7939,11 @@ snapshots:
       - encoding
       - rollup
       - supports-color
+
+  '@shadcn/react@0.3.0(@types/react@19.2.18)(react@19.2.8)':
+    optionalDependencies:
+      '@types/react': 19.2.18
+      react: 19.2.8
 
   '@simple-libs/child-process-utils@2.0.0':
     dependencies:
@@ -8477,7 +8491,7 @@ snapshots:
       obug: 2.1.3
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@7.3.5(@types/node@26.3.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+      vitest: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
 
   '@vitest/eslint-plugin@1.6.27(@typescript-eslint/eslint-plugin@8.68.0(@typescript-eslint/parser@8.68.0(eslint@9.39.4(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)(vitest@4.1.11)':
     dependencies:
@@ -8487,7 +8501,7 @@ snapshots:
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 8.68.0(@typescript-eslint/parser@8.68.0(eslint@9.39.4(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@5.9.3)
       typescript: 5.9.3
-      vitest: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@7.3.5(@types/node@26.3.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+      vitest: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
     transitivePeerDependencies:
       - supports-color
 
@@ -8535,7 +8549,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.0
-      vitest: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@7.3.5(@types/node@26.3.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+      vitest: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
 
   '@vitest/utils@4.1.11':
     dependencies:
@@ -11836,8 +11850,6 @@ snapshots:
 
   undici@8.10.0: {}
 
-  unicorn-magic@0.1.0: {}
-
   universalify@2.0.1: {}
 
   unrs-resolver@1.12.2:
@@ -11952,7 +11964,7 @@ snapshots:
       tsx: 4.23.12
       yaml: 2.9.0
 
-  vitest@4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@7.3.5(@types/node@26.3.0)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)):
+  vitest@4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.3.0)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.0.1)(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)):
     dependencies:
       '@vitest/expect': 4.1.11
       '@vitest/mocker': 4.1.11(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
