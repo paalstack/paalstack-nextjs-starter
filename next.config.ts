@@ -69,8 +69,12 @@ const configWithSentry = withSentryConfig(nextConfig, {
   // Proxies Sentry ingest requests through the app's own origin.
   tunnelRoute: '/monitoring',
 
-  disableLogger: true,
-  automaticVercelMonitors: true,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+    automaticVercelMonitors: true,
+  },
 });
 
 // `ANALYZE=true pnpm build` opens an interactive treemap of the bundles.
