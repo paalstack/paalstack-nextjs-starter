@@ -106,7 +106,7 @@
     "@vitest/eslint-plugin": "^1.6.27",
     "@vitest/ui": "^4.1.11",
     "commitizen": "^4.3.1",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.5",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9.18.0",
     "eslint-config-next": "^16.3.2",
